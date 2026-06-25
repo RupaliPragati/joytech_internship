@@ -54,7 +54,3 @@ Provides health status and system diagnostics.
 - Real-time WebSocket Telemetry
 - Anomaly Detection
 
-
-## how to run
-python main.py
-uvicorn main:app --reload
