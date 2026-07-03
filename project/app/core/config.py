@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 class Settings:
@@ -11,5 +12,10 @@ class Settings:
     PORT = int(os.getenv("PORT", 8000))
 
     DEBUG = os.getenv("DEBUG", "True").lower() == "true"
+    DATABASE_URL = os.getenv("DATABASE_URL")
+
+    LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
+    MODEL_VERSION = os.getenv("MODEL_VERSION", "1.0")
 
 settings = Settings()

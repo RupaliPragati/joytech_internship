@@ -58,3 +58,15 @@ Provides health status and system diagnostics.
 ## how to run
 python main.py
 uvicorn main:app --reload
+## for opening swagger
+https://psychic-disco-x54x7vqqjvq6fpgv4-8000.app.github.dev/docs#/default/latest_telemetry_telemetry_latest_get
+
+## Example Data 
+{
+  "satellite_id": "SAT-001",
+  "timestamp": "2026-07-02T08:00:00",
+  "battery_voltage": 4.8,
+  "temperature": 35,
+  "cpu_usage": 45,
+  "signal_strength": 80
+}
