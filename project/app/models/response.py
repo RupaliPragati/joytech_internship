@@ -1,12 +1,13 @@
+from typing import Optional
 from pydantic import BaseModel
-from datetime import datetime
 
 
 class TelemetryResponse(BaseModel):
     status: str
     message: str
     alerts: list[str]
-    ml_prediction: dict
+    packets_received: Optional[int] = None
+    ml_prediction: Optional[dict] = None
 
 
 class TelemetryData(BaseModel):

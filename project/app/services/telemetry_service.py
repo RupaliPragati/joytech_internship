@@ -12,11 +12,10 @@ repository = TelemetryRepository()
 class TelemetryService:
     """
     Handles telemetry processing and coordinates
-    alert generation, ML prediction, and future database operations.
+    alert generation, ML prediction, and database operations.
     """
 
     def process(self, telemetry):
-
         logger.info(
             f"Telemetry received from {telemetry.satellite_id}"
         )
@@ -26,18 +25,32 @@ class TelemetryService:
                 "Invalid satellite temperature."
             )
 
+        # Save telemetry
         repository.save(telemetry)
 
+        # Generate alerts
         alerts = alert_service.check_alert(telemetry)
         logger.info(f"Generated Alerts: {alerts}")
+
+        # ML prediction
         prediction = anomaly_detector.predict(telemetry)
         logger.info(f"ML Prediction: {prediction}")
 
+        # Buffer is still collecting packets
+        if prediction.get("status") == "waiting":
+            return {
+                "status": "waiting",
+                "message": prediction["message"],
+                "packets_received": prediction["packets_received"],
+                "alerts": alerts,
+            }
+
+        # Prediction completed
         return {
             "status": "success",
             "message": "Telemetry processed successfully.",
             "alerts": alerts,
-            "ml_prediction": prediction
+            "ml_prediction": prediction,
         }
 
     def get_history(self):

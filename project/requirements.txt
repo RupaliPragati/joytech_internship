@@ -107,3 +107,10 @@ wcwidth==0.6.0
 webcolors==25.10.0
 webencodings==0.5.1
 websocket-client==1.9.0
+numpy==1.26.4
+pandas==2.2.2
+matplotlib==3.10.0
+scikit-learn==1.6.1
+kagglehub==1.0.2
+tensorflow==2.20.0
+joblib==1.4.2
