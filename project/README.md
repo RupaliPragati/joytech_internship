@@ -63,10 +63,15 @@ https://psychic-disco-x54x7vqqjvq6fpgv4-8000.app.github.dev/docs#/default/latest
 
 ## Example Data 
 {
-  "satellite_id": "SAT-001",
-  "timestamp": "2026-07-02T08:00:00",
+  "satellite_id": "p-1",
+  "timestamp": "2026-07-08T09:00:00",
   "battery_voltage": 4.8,
   "temperature": 35,
   "cpu_usage": 45,
   "signal_strength": 80
 }
+## Model Verification
+
+python -c "from app.ml.model_loader import model_loader; print(list(model_loader.get_model().detectors.keys())[:10])"
+# for channel array
+python -c "from src.data.loader import download_dataset, load_channel_arrays; ..."

@@ -37,20 +37,22 @@ class TelemetryService:
         logger.info(f"ML Prediction: {prediction}")
 
         # Buffer is still collecting packets
-        if prediction.get("status") == "waiting":
+        if prediction["status"] == "waiting":
             return {
-                "status": "waiting",
+                "status": prediction["status"],
                 "message": prediction["message"],
-                "packets_received": prediction["packets_received"],
                 "alerts": alerts,
+                "packets_received": prediction["packets_received"],
+                "required_packets": prediction["required_packets"],
+                "ml_prediction": None,
             }
 
         # Prediction completed
         return {
-            "status": "success",
-            "message": "Telemetry processed successfully.",
+            "status": prediction["status"],
+            "message": prediction["message"],
             "alerts": alerts,
-            "ml_prediction": prediction,
+            "ml_prediction": prediction["ml_prediction"],
         }
 
     def get_history(self):

@@ -1,16 +1,17 @@
 from pathlib import Path
-from src.models.isolation_forest import MultiChannelIsolationForest
+
+from src.backend_telemetry_model import BackendTelemetryScorer
 
 
 class ModelLoader:
     """
-    Loads the trained ML model once and provides
-    access to it throughout the application.
+    Loads the trained backend telemetry model once and
+    provides access throughout the application.
     """
 
     def __init__(self):
-        self.model = MultiChannelIsolationForest.load(
-            Path("models_saved/isoforest_all_channels_with_scalers.joblib")
+        self.model = BackendTelemetryScorer(
+            Path("models_saved/backend_telemetry_isoforest.joblib")
         )
 
     def get_model(self):

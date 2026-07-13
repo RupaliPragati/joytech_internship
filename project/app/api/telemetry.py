@@ -21,6 +21,14 @@ def receive_telemetry(data: TelemetryPacket):
     return telemetry_service.process(data)
 
 
+@router.post("/predict", response_model=TelemetryResponse)
+def predict(data: TelemetryPacket):
+    """
+    Run anomaly prediction on a telemetry packet.
+    """
+    return telemetry_service.process(data)
+
+
 @router.get(
     "/telemetry/history",
     response_model=list[TelemetryData]

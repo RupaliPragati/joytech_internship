@@ -1,65 +1,44 @@
-import numpy as np
-
 from app.ml.model_loader import model_loader
-from app.ml.telemetry_buffer import telemetry_buffer
-
-from src.inference.live_window import preprocess_live_window
 
 
 class AnomalyDetector:
     """
-    Handles live anomaly prediction using the trained
-    Isolation Forest model.
+    Handles live anomaly prediction using BackendTelemetryScorer.
     """
+
+    def __init__(self):
+        self.model = model_loader.get_model()
 
     def predict(self, telemetry):
 
-        # TODO: Confirm with ML team whether satellite_id
-        # or channel_id should be used.
-        ch_id = telemetry.satellite_id
+        telemetry_data = {
+            "battery_voltage": telemetry.battery_voltage,
+            "temperature": telemetry.temperature,
+            "cpu_usage": telemetry.cpu_usage,
+            "signal_strength": telemetry.signal_strength,
+        }
 
-        # Convert telemetry packet into feature vector
-        feature_vector = [
-            telemetry.battery_voltage,
-            telemetry.temperature,
-            telemetry.cpu_usage,
-            telemetry.signal_strength,
-        ]
+        result = self.model.handle_packet(
+            satellite_id=telemetry.satellite_id,
+            telemetry=telemetry_data,
+        )
 
-        # Store packet in rolling buffer
-        telemetry_buffer.add_packet(ch_id, feature_vector)
-
-        # Wait until enough packets are collected
-        if not telemetry_buffer.is_ready(ch_id):
+        if result["status"] == "warming_up":
             return {
                 "status": "waiting",
                 "message": "Collecting telemetry packets before prediction.",
-                "packets_received": len(
-                    telemetry_buffer.buffers[ch_id]
-                ),
+                "packets_received": result["buffer_size"],
+                "required_packets": result["required_buffer_size"],
+                "ml_prediction": None,
             }
 
-        # Get rolling window
-        raw_buffer = telemetry_buffer.get_buffer(ch_id)
-
-        # Load trained model
-        manager = model_loader.get_model()
-
-        # Convert telemetry window into model features
-        X_test = preprocess_live_window(
-            ch_id,
-            raw_buffer,
-            manager
-        )
-
-        # Run prediction
-        result = manager.predict(ch_id, X_test)
-
         return {
-            "model_name": "Isolation Forest",
-            "prediction": {
-                "is_anomaly": bool(result["is_anomaly"][0]),
-                "score": float(result["score"][0]),
-                "label": int(result["label"][0]),
+            "status": "success",
+            "message": "Prediction completed successfully.",
+            "ml_prediction": {
+                "model_name": "Backend Telemetry Isolation Forest",
+                "is_anomaly": result["is_anomaly"],
+                "label": result["label"],
+                "score": result["score"],
             },
         }

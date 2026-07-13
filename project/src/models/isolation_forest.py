@@ -67,6 +67,7 @@ class IsolationForestDetector(BaseDetector):
         self.random_state = random_state
         self.model: Optional[IsolationForest] = None
         self._is_fitted = False
+        
 
     def fit(self, X_train: np.ndarray) -> "IsolationForestDetector":
         self.model = IsolationForest(
@@ -102,23 +103,23 @@ class MultiChannelIsolationForest:
     predict(ch_id, X) call, so the backend never has to manage a
     dict of models itself.
 
-    IMPORTANT: predict() expects already-windowed summary features. For raw
-    live telemetry, use src.inference.live_window.preprocess_live_window()
-    with an artifact that includes per-channel scalers.
+    IMPORTANT — input to predict() must already be windowed + scaled the
+    same way training data was (scale_channel + create_windows_stats).
+    This class does not do that preprocessing itself; see the
+    "Known gap" note in README_isolation_forest.md about persisting the
+    scaler for live/new data.
     """
 
     def __init__(self):
         self.detectors: dict[str, IsolationForestDetector] = {}
-        self.scalers: dict[str, object] = {}
+        self.scalers: dict = {}
+        
 
     def fit_channel(self, ch_id: str, X_train: np.ndarray,
-                     contamination: float = IF_DEFAULT_CONTAMINATION,
-                     scaler: object = None) -> IsolationForestDetector:
+                     contamination: float = IF_DEFAULT_CONTAMINATION) -> IsolationForestDetector:
         det = IsolationForestDetector(ch_id, contamination=contamination)
         det.fit(X_train)
         self.detectors[ch_id] = det
-        if scaler is not None:
-            self.scalers[ch_id] = scaler
         return det
 
     def predict(self, ch_id: str, X_test: np.ndarray) -> dict:
@@ -155,9 +156,9 @@ class MultiChannelIsolationForest:
             "score": det.score(X_test),
             "n_samples": int(np.asarray(X_test).shape[0]),
         }
-
+    
     def save(self, path: Union[str, Path]) -> None:
-        """Save every channel's fitted detector and scaler into one .joblib file."""
+        """Save every channel's fitted detector into one .joblib file."""
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         joblib.dump({"detectors": self.detectors, "scalers": self.scalers}, path)
@@ -233,7 +234,8 @@ def run_isolation_forest(labels, shape_df, train_dir, test_dir,
 
         contam_rate = contam_lookup.get(ch_id, IF_DEFAULT_CONTAMINATION)
 
-        det = manager.fit_channel(ch_id, X_train, contamination=contam_rate, scaler=scaler)
+        det = manager.fit_channel(ch_id, X_train, contamination=contam_rate)
+        manager.scalers[ch_id] = scaler
         preds = det.predict(X_test)
         scores = det.score(X_test)
 
