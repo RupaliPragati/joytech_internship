@@ -1,3 +1,4 @@
+from app.logger import logger
 from app.ml.model_loader import model_loader
 
 
@@ -7,9 +8,14 @@ class AnomalyDetector:
     """
 
     def __init__(self):
+        logger.info("Initializing BackendTelemetryScorer...")
         self.model = model_loader.get_model()
+        logger.info("BackendTelemetryScorer loaded successfully.")
 
     def predict(self, telemetry):
+        logger.info(
+            f"Starting prediction for satellite: {telemetry.satellite_id}"
+        )
 
         telemetry_data = {
             "battery_voltage": telemetry.battery_voltage,
@@ -18,12 +24,21 @@ class AnomalyDetector:
             "signal_strength": telemetry.signal_strength,
         }
 
+        logger.info(f"Telemetry Data: {telemetry_data}")
+
         result = self.model.handle_packet(
             satellite_id=telemetry.satellite_id,
             telemetry=telemetry_data,
         )
 
+        logger.info(f"Raw Model Response: {result}")
+
         if result["status"] == "warming_up":
+            logger.warning(
+                f"Model warming up for {telemetry.satellite_id} "
+                f"({result['buffer_size']}/{result['required_buffer_size']} packets)"
+            )
+
             return {
                 "status": "waiting",
                 "message": "Collecting telemetry packets before prediction.",
@@ -31,6 +46,10 @@ class AnomalyDetector:
                 "required_packets": result["required_buffer_size"],
                 "ml_prediction": None,
             }
+
+        logger.info(
+            f"Prediction completed for {telemetry.satellite_id}"
+        )
 
         return {
             "status": "success",

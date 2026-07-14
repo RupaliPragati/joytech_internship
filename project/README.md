@@ -63,12 +63,12 @@ https://psychic-disco-x54x7vqqjvq6fpgv4-8000.app.github.dev/docs#/default/latest
 
 ## Example Data 
 {
-  "satellite_id": "p-1",
-  "timestamp": "2026-07-08T09:00:00",
-  "battery_voltage": 4.8,
-  "temperature": 35,
-  "cpu_usage": 45,
-  "signal_strength": 80
+  "satellite_id": "SAT-001",
+  "timestamp": "2026-07-13T10:00:00",
+  "battery_voltage": 12.4,
+  "temperature": 38.2,
+  "cpu_usage": 43,
+  "signal_strength": 91
 }
 ## Model Verification
 
