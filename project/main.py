@@ -7,16 +7,23 @@ from app.exceptions.handlers import (
     TelemetryException,
     telemetry_exception_handler
 )
+from app.middleware.logging import RequestLoggingMiddleware
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.VERSION,
     description="Backend service for satellite telemetry processing and anomaly detection."
 )
+app.add_middleware(RequestLoggingMiddleware)
 app.add_exception_handler(TelemetryException, telemetry_exception_handler)
-app.include_router(health_router)
-app.include_router(status_router)
-app.include_router(telemetry_router)
+app.include_router(health_router, prefix="/api/v1")
+app.include_router(status_router, prefix="/api/v1")
+app.include_router(telemetry_router, prefix="/api/v1")
 
 @app.get("/")
 def root():
-    return {"message": "CERT-SAT Backend Running"}
+    return {
+        "message": "CERT-SAT Backend Running",
+        "api_version": "v1",
+        "docs": "/docs",
+        "health": "/api/v1/health"
+    }
