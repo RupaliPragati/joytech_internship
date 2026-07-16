@@ -1,77 +1,236 @@
 # joytech_internship
-# CERT-SAT Backend Architecture
+# CERT-SAT Backend
 
-## Objective
-Develop a scalable backend system for receiving, validating, processing, and storing satellite telemetry data.
+A FastAPI-based backend for satellite telemetry processing, anomaly detection, and system monitoring.
 
-## Technology Stack
+---
 
-- FastAPI
+# Features
+
+- Receive satellite telemetry packets
+- Validate telemetry using Pydantic
+- Detect anomalies using the trained ML model
+- Health monitoring endpoint
+- Request logging middleware
+- API versioning (`/api/v1`)
+- Swagger API documentation
+
+---
+
+# Tech Stack
+
 - Python 3.12
+- FastAPI
 - Pydantic
-- PostgreSQL (Future)
-- Redis (Future)
-- Docker (Future)
+- Uvicorn
+- SQLAlchemy
+- Scikit-learn
+- Joblib
+- Docker
 
-## System Architecture
+---
 
-Satellite Sensors
-↓
-Ground Station
-↓
-FastAPI Ingestion API
-↓
-Validation Layer
-↓
-Processing Service
-↓
-Database Storage
-↓
-Monitoring Dashboard
+# Project Structure
 
-## Components
+```
+project/
+│── app/
+│── src/
+│── docs/
+│── models_saved/
+│── main.py
+│── requirements.txt
+│── Dockerfile
+│── .env.example
+│── telemetry.db
+```
 
-### Ingestion Layer
-Receives telemetry packets from satellites through REST APIs.
+---
 
-### Validation Layer
-Validates incoming telemetry using Pydantic schemas.
+# Installation
 
-### Processing Layer
-Normalizes telemetry values and prepares data for storage.
+Clone the repository
 
-### Storage Layer
-Stores telemetry history for analysis and monitoring.
+```bash
+git clone <repository-url>
+cd project
+```
 
-### Monitoring Layer
-Provides health status and system diagnostics.
+Install dependencies
 
-## Future Improvements
+```bash
+pip install -r requirements.txt
+```
 
-- JWT Authentication
-- Kafka Streaming
-- Redis Cache
-- Real-time WebSocket Telemetry
-- Anomaly Detection
+---
 
+# Environment Setup
 
-## how to run
-python main.py
+Create a `.env` file by copying the example file.
+
+```bash
+cp .env.example .env
+```
+
+Update the required values if necessary.
+
+---
+
+# Running Locally
+
+Start the backend
+
+```bash
 uvicorn main:app --reload
-## for opening swagger
-https://psychic-disco-x54x7vqqjvq6fpgv4-8000.app.github.dev/docs#/default/latest_telemetry_telemetry_latest_get
+```
 
-## Example Data 
+Backend URL
+
+```
+http://127.0.0.1:8000
+```
+
+Swagger Documentation
+
+```
+https://psychic-disco-x54x7vqqjvq6fpgv4-8000.app.github.dev/docs#/default/latest_telemetry_telemetry_latest_get
+```
+
+---
+
+# Docker
+
+Build the image
+
+```bash
+docker build -t certsat-backend .
+```
+
+Run the container
+
+```bash
+docker run -p 8000:8000 certsat-backend
+```
+
+---
+
+# API Endpoints
+
+## Health
+
+```
+GET /api/v1/health
+```
+
+Returns
+
+- API status
+- Model status
+- Backend version
+- Timestamp
+
+---
+
+## Predict
+
+```
+POST /api/v1/predict
+```
+
+Example Request
+
+```json
 {
   "satellite_id": "SAT-001",
-  "timestamp": "2026-07-13T10:00:00",
+  "timestamp": "2026-07-16T10:00:00",
   "battery_voltage": 12.4,
   "temperature": 38.2,
   "cpu_usage": 43,
   "signal_strength": 91
 }
-## Model Verification
+```
 
-python -c "from app.ml.model_loader import model_loader; print(list(model_loader.get_model().detectors.keys())[:10])"
-# for channel array
-python -c "from src.data.loader import download_dataset, load_channel_arrays; ..."
+---
+
+# Telemetry
+
+```
+POST /api/v1/telemetry
+```
+
+```
+GET /api/v1/telemetry/history
+```
+
+```
+GET /api/v1/telemetry/latest
+```
+
+---
+
+# Configuration
+
+The backend uses environment variables defined in `.env`.
+
+Example variables:
+
+```
+HOST
+PORT
+DEBUG
+DATABASE_URL
+LOG_LEVEL
+MODEL_VERSION
+```
+
+---
+
+# Testing
+
+Run the prediction test
+
+```bash
+python test_predict.py
+```
+
+Run concurrent request testing
+
+```bash
+python test_concurrent.py
+```
+
+---
+
+# Future Improvements
+
+- JWT Authentication
+- PostgreSQL
+- Redis Cache
+- Kafka Streaming
+- WebSocket Telemetry
+- CI/CD Pipeline
+
+---
+
+# License
+
+MIT License
+
+
+# for clean enviroment verification 
+is:
+
+Build the Docker image:
+
+docker build -t certsat-backend .
+
+Run it:
+
+docker run -p 8000:8000 certsat-backend
+
+Open:
+
+http://localhost:8000/docs
+Verify:
+GET /api/v1/health returns 200 OK.
+POST /api/v1/predict is accessible.
