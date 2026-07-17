@@ -13,11 +13,13 @@ app = FastAPI(
     version=settings.VERSION,
     description="Backend service for satellite telemetry processing and anomaly detection."
 )
+from app.api.auth import router as auth_router
 app.add_middleware(RequestLoggingMiddleware)
 app.add_exception_handler(TelemetryException, telemetry_exception_handler)
 app.include_router(health_router, prefix="/api/v1")
 app.include_router(status_router, prefix="/api/v1")
 app.include_router(telemetry_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1")
 
 @app.get("/")
 def root():

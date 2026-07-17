@@ -1,5 +1,5 @@
-from fastapi import APIRouter
-
+from fastapi import APIRouter, Depends, HTTPException
+from app.auth.dependencies import get_current_user
 from app.models.telemetry import TelemetryPacket
 from app.models.response import (
     TelemetryResponse,
@@ -14,7 +14,7 @@ telemetry_service = TelemetryService()
 
 
 @router.post("/telemetry", response_model=TelemetryResponse)
-def receive_telemetry(data: TelemetryPacket):
+def receive_telemetry(data: TelemetryPacket, current_user=Depends(get_current_user)):
     """
     Receive, validate and process telemetry packets.
     """
@@ -22,7 +22,7 @@ def receive_telemetry(data: TelemetryPacket):
 
 
 @router.post("/predict", response_model=TelemetryResponse)
-def predict(data: TelemetryPacket):
+def predict(data: TelemetryPacket, current_user=Depends(get_current_user)):
     """
     Run anomaly prediction on a telemetry packet.
     """
@@ -33,7 +33,7 @@ def predict(data: TelemetryPacket):
     "/telemetry/history",
     response_model=list[TelemetryData]
 )
-def telemetry_history():
+def telemetry_history(current_user=Depends(get_current_user)):
     """
     Returns all stored telemetry packets.
     """
@@ -44,7 +44,7 @@ def telemetry_history():
     "/telemetry/latest",
     response_model=TelemetryData
 )
-def latest_telemetry():
+def latest_telemetry(current_user=Depends(get_current_user)):
     """
     Returns the latest telemetry packet.
     """
@@ -55,7 +55,7 @@ def latest_telemetry():
     "/telemetry/statistics",
     response_model=StatisticsResponse
 )
-def telemetry_statistics():
+def telemetry_statistics(current_user=Depends(get_current_user)):
     """
     Returns telemetry statistics.
     """
