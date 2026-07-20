@@ -109,7 +109,7 @@ docker build -t certsat-backend .
 Run the container
 
 ```bash
-docker run -p 8000:8000 certsat-backend
+docker run -p 8000:8000 cert-sat-backend
 ```
 
 ---
