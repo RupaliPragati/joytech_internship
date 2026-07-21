@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 
 
 class TelemetryException(Exception):
-    def __init__(self, message):
+    def __init__(self, message: str):
         self.message = message
 
 
@@ -14,7 +14,9 @@ async def telemetry_exception_handler(
     return JSONResponse(
         status_code=400,
         content={
-            "status": "error",
-            "message": exc.message
+            "success": False,
+            "status_code": 400,
+            "error": exc.message,
+            "path": request.url.path
         }
     )
