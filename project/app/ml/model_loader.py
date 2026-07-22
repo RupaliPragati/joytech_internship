@@ -1,22 +1,19 @@
-from pathlib import Path
-
-from src.backend_telemetry_model import BackendTelemetryScorer
+from app.core.config import settings
+import joblib
 
 
 class ModelLoader:
-    """
-    Loads the trained backend telemetry model once and
-    provides access throughout the application.
-    """
-
     def __init__(self):
-        self.model = BackendTelemetryScorer(
-            Path("models_saved/backend_telemetry_isoforest.joblib")
-        )
+        self.model = None
+
+    def load_model(self):
+        self.model = joblib.load(settings.MODEL_PATH)
+        return self.model
 
     def get_model(self):
+        if self.model is None:
+            self.load_model()
         return self.model
 
 
-# Singleton instance
 model_loader = ModelLoader()
