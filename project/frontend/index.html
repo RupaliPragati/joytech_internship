@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERT-SAT Authentication</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="app.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            CERT-SAT
+
+        </div>
+
+        <ul>
+
+            <li class="active">Dashboard</li>
+            <li>Google Login</li>
+            <li>Backend API</li>
+            <li>System Health</li>
+
+        </ul>
+
+    </aside>
+
+    <main class="content">
+
+        <header>
+
+            <h1>Satellite Authentication Dashboard</h1>
+
+            <span class="status">🟢 Online</span>
+
+        </header>
+
+        <section class="hero">
+
+    <div class="hero-text">
+
+       <h2>CERT-SAT Backend Authentication</h2>
+
+        <p>
+            Authenticate securely using Firebase Google Authentication.
+            The frontend exchanges a Firebase ID Token with the FastAPI backend
+            to verify user identity before accessing satellite telemetry services.real time.
+        </p>
+
+    </div>
+
+    <div class="hero-icon">
+
+        🛰️
+
+    </div>
+
+</section>
+
+        <div class="grid">
+
+            <div class="card">
+
+                <h2>Google Authentication</h2>
+
+                <p>
+
+                    Secure login using Firebase Authentication.
+
+                </p>
+
+                <button id="loginBtn">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
+
+                    Continue with Google
+
+                </button>
+
+            </div>
+
+            <div class="card">
+
+                <h2>User Information</h2>
+
+                <div id="userData">
+
+                    <div class="user-placeholder">
+                    <div class="avatar">👤</div>
+                    <h3>Not Signed In</h3>
+                    <p>Please authenticate using Google.</p>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <h2>Backend Status</h2>
+
+                <div class="health">
+
+                  <div class="status-item">
+                  <span>FastAPI</span>
+                  <span id="apiStatus">Checking...</span>
+                </div>
+
+                <div class="status-item">
+                    <span>Firebase</span>
+                    <span class="online">● Ready</span>
+                </div>
+
+                <div class="status-item">
+                  <span>Google OAuth</span>
+                   <span id="authStatus">Waiting...</span>
+                </div>
+
+               </div>
+
+            </div>
+
+            <div class="card full-width">
+
+<h2>Authentication Flow</h2>
+
+<div class="flow">
+
+<div class="step">
+🌐
+<p>Frontend</p>
+</div>
+
+<div class="arrow">→</div>
+
+<div class="step">
+
+<p>Firebase</p>
+</div>
+
+<div class="arrow">→</div>
+
+<div class="step">
+
+<p>FastAPI</p>
+</div>
+
+<div class="arrow">→</div>
+
+<div class="step">
+
+<p>Verified</p>
+</div>
+
+</div>
+
+</div>
+
+            <div class="card">
+
+                <h2>Backend Response</h2>
+
+                <pre id="response">
+
+Waiting for Login...
+
+                </pre>
+             <div class="card">
+
+    <h2>Satellite Telemetry</h2>
+
+    <input id="battery" type="number" placeholder="Battery Voltage">
+
+    <input id="temperature" type="number" placeholder="Temperature">
+
+    <input id="cpu" type="number" placeholder="CPU Usage">
+
+    <input id="signal" type="number" placeholder="Signal Strength">
+
+    <button id="predictBtn">
+        Predict Telemetry
+    </button>
+
+</div>
+
+<div class="card">
+
+    <h2>Prediction Result</h2>
+
+    <pre id="predictionResult">
+
+Waiting...
+
+    </pre>
+
+</div>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+<div id="toast">
+
+Authentication Successful
+
+</div>
+
+</body>
+
+</html>
