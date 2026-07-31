@@ -14,6 +14,8 @@ from app.exceptions.handlers import (
 from app.logger import logger
 from app.middleware.logging import RequestLoggingMiddleware
 
+from fastapi.middleware.cors import CORSMiddleware
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -31,6 +33,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://crispy-space-yodel-5gr5gx9vpgrrh66p-5500.app.github.dev"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_middleware(RequestLoggingMiddleware)
 
 app.add_exception_handler(

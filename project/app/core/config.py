@@ -24,6 +24,7 @@ class Settings:
 )
 
     MODEL_VERSION = os.getenv("MODEL_VERSION", "1.0")
-
+    MONGO_URI = os.getenv("MONGO_URI")
+    MONGO_DB = os.getenv("MONGO_DB")
 
 settings = Settings()

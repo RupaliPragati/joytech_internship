@@ -1,5 +1,5 @@
 from app.core.config import settings
-import joblib
+from src.backend_telemetry_model import BackendTelemetryScorer
 
 
 class ModelLoader:
@@ -7,7 +7,7 @@ class ModelLoader:
         self.model = None
 
     def load_model(self):
-        self.model = joblib.load(settings.MODEL_PATH)
+        self.model = BackendTelemetryScorer(settings.MODEL_PATH)
         return self.model
 
     def get_model(self):

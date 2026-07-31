@@ -1,51 +1,21 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import APIRouter
 
-from app.auth.auth import AuthService
+from app.auth.firebase_auth import verify_google_token
+from app.models.google_auth import GoogleLoginRequest
 
 router = APIRouter(tags=["Authentication"])
 
-auth_service = AuthService()
+@router.post("/google-login")
+def google_login(request: GoogleLoginRequest):
+    decoded = verify_google_token(request.id_token)
 
-
-@router.post(
-    "/login",
-    summary="User Login",
-    description="Authenticates a user and returns a JWT access token.",
-    responses={
-        200: {
-            "description": "Login successful",
-            "content": {
-                "application/json": {
-                    "example": {
-                        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                        "token_type": "bearer"
-                    }
-                }
-            },
+    return {
+        "status": "success",
+        "message": "Google authentication successful",
+        "user": {
+            "uid": decoded["uid"],
+            "email": decoded.get("email"),
+            "name": decoded.get("name"),
+            "picture": decoded.get("picture"),
         },
-        401: {
-            "description": "Invalid credentials",
-            "content": {
-                "application/json": {
-                    "example": {
-                        "detail": "Invalid username or password"
-                    }
-                }
-            },
-        },
-    },
-)
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    token = auth_service.authenticate(
-        form_data.username,
-        form_data.password,
-    )
-
-    if token is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid username or password",
-        )
-
-    return token
+    }

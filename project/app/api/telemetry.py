@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends
-from app.auth.dependencies import get_current_user
+from fastapi import APIRouter
+
 from app.models.telemetry import TelemetryPacket
 from app.models.response import (
     TelemetryResponse,
@@ -15,45 +15,36 @@ telemetry_service = TelemetryService()
 
 @router.post(
     "/telemetry",
+    response_model=TelemetryResponse,
+    summary="Receive Telemetry",
+    description="Receives telemetry packets and processes them.",
     responses={
-    200: {
-        "description": "Prediction completed successfully",
-        "content": {
-            "application/json": {
-                "example": {
-                    "status": "success",
-                    "message": "Telemetry processed successfully",
-                    "alerts": [],
-                    "packets_received": 5,
-                    "required_packets": 5,
-                    "ml_prediction": {
-                        "model_name": "BackendTelemetryScorer",
-                        "is_anomaly": False,
-                        "label": 0,
-                        "score": 0.12
+        200: {
+            "description": "Telemetry processed successfully",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "status": "success",
+                        "message": "Telemetry processed successfully",
+                        "alerts": [],
+                        "packets_received": 5,
+                        "required_packets": 5,
+                        "ml_prediction": {
+                            "model_name": "BackendTelemetryScorer",
+                            "is_anomaly": False,
+                            "label": 0,
+                            "score": 0.12
+                        }
                     }
                 }
-            }
+            },
+        },
+        422: {
+            "description": "Validation Error"
         },
     },
-    401: {
-        "description": "Unauthorized",
-        "content": {
-            "application/json": {
-                "example": {
-                    "detail": "Not authenticated"
-                }
-            }
-        },
-    },
-    422: {
-        "description": "Validation Error"
-    },
-    })
-def receive_telemetry(
-    data: TelemetryPacket,
-    current_user=Depends(get_current_user)
-):
+)
+def receive_telemetry(data: TelemetryPacket):
     return telemetry_service.process(data)
 
 
@@ -64,14 +55,10 @@ def receive_telemetry(
     description="Runs anomaly prediction on the provided telemetry packet.",
     responses={
         200: {"description": "Prediction completed successfully"},
-        401: {"description": "Unauthorized"},
         422: {"description": "Validation Error"},
     },
 )
-def predict(
-    data: TelemetryPacket,
-    current_user=Depends(get_current_user)
-):
+def predict(data: TelemetryPacket):
     return telemetry_service.process(data)
 
 
@@ -80,12 +67,8 @@ def predict(
     response_model=list[TelemetryData],
     summary="Get Telemetry History",
     description="Returns all stored telemetry packets.",
-    responses={
-        200: {"description": "Telemetry history retrieved successfully"},
-        401: {"description": "Unauthorized"},
-    },
 )
-def telemetry_history(current_user=Depends(get_current_user)):
+def telemetry_history():
     return telemetry_service.get_history()
 
 
@@ -94,12 +77,8 @@ def telemetry_history(current_user=Depends(get_current_user)):
     response_model=TelemetryData,
     summary="Get Latest Telemetry",
     description="Returns the latest telemetry packet received by the backend.",
-    responses={
-        200: {"description": "Latest telemetry retrieved successfully"},
-        401: {"description": "Unauthorized"},
-    },
 )
-def latest_telemetry(current_user=Depends(get_current_user)):
+def latest_telemetry():
     return telemetry_service.get_latest()
 
 
@@ -108,10 +87,6 @@ def latest_telemetry(current_user=Depends(get_current_user)):
     response_model=StatisticsResponse,
     summary="Get Telemetry Statistics",
     description="Returns summary statistics calculated from stored telemetry data.",
-    responses={
-        200: {"description": "Statistics retrieved successfully"},
-        401: {"description": "Unauthorized"},
-    },
 )
-def telemetry_statistics(current_user=Depends(get_current_user)):
+def telemetry_statistics():
     return telemetry_service.get_statistics()

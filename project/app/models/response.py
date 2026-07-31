@@ -3,18 +3,21 @@ from pydantic import BaseModel
 
 
 class PredictionResponse(BaseModel):
-    model_name: str
     is_anomaly: bool
     label: int
     score: float
+    n_samples: int
 
 
 class TelemetryResponse(BaseModel):
     status: str
-    message: str
     alerts: list[str]
-    packets_received: Optional[int] = None
-    required_packets: Optional[int] = None
+
+    # Present only during warm-up
+    buffer_size: Optional[int] = None
+    required_buffer_size: Optional[int] = None
+
+    # Present once the model starts scoring
     ml_prediction: Optional[PredictionResponse] = None
 
 

@@ -47,18 +47,17 @@ class TelemetryService:
             logger.info(f"Prediction Result: {prediction}")
 
             # Model is still warming up
-            if prediction["status"] == "waiting":
+            if prediction["status"] == "warming_up":
                 logger.warning(
-                    f"Model warming up ({prediction['packets_received']}/"
-                    f"{prediction['required_packets']} packets collected)"
+                    f"Model warming up ({prediction['buffer_size']}/"
+                    f"{prediction['required_buffer_size']} packets collected)"
                 )
 
                 return {
                     "status": prediction["status"],
-                    "message": prediction["message"],
                     "alerts": alerts,
-                    "packets_received": prediction["packets_received"],
-                    "required_packets": prediction["required_packets"],
+                    "buffer_size": prediction["buffer_size"],
+                    "required_buffer_size": prediction["required_buffer_size"],
                     "ml_prediction": None,
                 }
 
@@ -66,9 +65,13 @@ class TelemetryService:
 
             return {
                 "status": prediction["status"],
-                "message": prediction["message"],
                 "alerts": alerts,
-                "ml_prediction": prediction["ml_prediction"],
+                "ml_prediction": {
+                    "is_anomaly": prediction["is_anomaly"],
+                    "label": prediction["label"],
+                    "score": prediction["score"],
+                    "n_samples": prediction["n_samples"],
+                },
             }
 
         except TelemetryException as e:
@@ -78,9 +81,8 @@ class TelemetryService:
                 detail=str(e)
             )
 
-        except Exception as e:
+        except Exception:
             logger.exception("Unexpected error during telemetry processing.")
-
             raise HTTPException(
                 status_code=500,
                 detail="Internal server error while processing telemetry."
