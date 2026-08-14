@@ -227,5 +227,5 @@ Additional documentation is available in the `docs/` directory.
 
 MIT License
 
-python -m http.server 5500
+python3 -m http.server 5500 --directory frontend
 
