@@ -226,3 +226,6 @@ Additional documentation is available in the `docs/` directory.
 ## License
 
 MIT License
+
+python -m http.server 5500
+
