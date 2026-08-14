@@ -49,3 +49,6 @@ htmlcov/
 *.tmp
 *.bak
 firebase/serviceAccountKey.json
+# Firebase Admin credentials
+app/firebase/*.json
+
