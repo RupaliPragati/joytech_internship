@@ -57,6 +57,64 @@ pip install -r requirements.txt
 ```
 
 ## Environment Setup
+## Firebase Authentication Setup
+
+The backend uses Firebase Admin SDK to verify Google authentication
+tokens.
+
+For security reasons, the Firebase service-account credential is NOT
+included in the Git repository.
+
+### 1. Create Firebase Service Account Credentials
+
+Go to:
+
+Firebase Console
+→ Project Settings
+→ Service Accounts
+→ Firebase Admin SDK
+→ Generate New Private Key
+
+Download the generated JSON credential file.
+
+### 2. Place the Credential
+
+Create the following directory:
+
+project/app/firebase/
+
+Place the downloaded credential file inside it.
+
+Example:
+
+project/
+├── app/
+│   └── firebase/
+│       └── firebase-service-account.json
+├── main.py
+├── requirements.txt
+└── ...
+
+### 3. Configure the Credential Path
+
+Set the Firebase credential path using an environment variable:
+
+FIREBASE_CREDENTIALS_PATH=app/firebase/firebase-service-account.json
+
+### 4. Start the FastAPI Backend
+
+From the project directory:
+
+uvicorn main:app --reload
+
+The API will then be available through the configured FastAPI server.
+
+### Security Note
+
+The Firebase service-account JSON contains private credentials and must
+NOT be committed to Git or uploaded to the public repository.
+
+The credential file is excluded using `.gitignore`.
 
 Create the environment file.
 
