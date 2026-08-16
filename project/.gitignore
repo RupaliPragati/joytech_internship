@@ -52,3 +52,11 @@ firebase/serviceAccountKey.json
 # Firebase Admin credentials
 app/firebase/*.json
 
+project/app/firebase/*.json
+
+
+.env
+__pycache__/
+*.pyc
+telemetry.db
+app/firebase/*.json
